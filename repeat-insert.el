@@ -89,14 +89,13 @@
 once each.  No error checking -- barfs if either isn't a number.
 VAR is let-bound."
   (let ((high-save (gensym)))
-    (`
-     (let (( (, var) (, low))
-	   ( (, high-save) (, high))
+    `(let ((,var ,low)
+	   (,high-save ,high)
 	   )
-       (while (<= (, var) (, high-save))
-	 (,@ body)
-	 (incf (, var))
-	 )))))
+       (while (<= ,var ,high-save)
+	 ,@body
+	 (incf ,var)
+	 ))))
 
 (defmacro ins-pat-for-var-low-high-or-list (var low high
 				    &rest body)
@@ -112,22 +111,21 @@ depending on which it is.  Insert-patterned uses this feature.
 "
   (let ((low-save  (gensym))
 	(high-save (gensym)))
-    (`
-     (let ((, var)
-	   ( (, low-save)  (, low))
-	   ( (, high-save) (, high))
+    `(let (,var
+	   (,low-save ,low)
+	   (,high-save ,high)
 	   )
        (cond
-	((numberp (, low-save))
-	 (setq (, var) (, low-save))
-	 (while (<= (, var) (, high-save))
-	   (,@ body)
-	   (incf (, var))
+	((numberp ,low-save)
+	 (setq ,var ,low-save)
+	 (while (<= ,var ,high-save)
+	   ,@body
+	   (incf ,var)
 	   ))
-	((listp (, low-save))
-	 (dolist ((, var) (, low-save))
-	   (,@ body)))
-	)))))
+	((listp ,low-save)
+	 (dolist (,var ,low-save)
+	   ,@body))
+	))))
 
 (defvar insert-patterned-last-input "")
 
